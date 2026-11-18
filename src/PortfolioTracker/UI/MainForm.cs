@@ -281,7 +281,7 @@ public sealed class MainForm : Form
                 _grid.Rows.Add(
                     security.Symbol, security.Name, TypeName(security.Type),
                     security.BuyDate.ToString("dd.MM.yyyy", German),
-                    security.BuyPrice, security.Quantity, "-", "-", "-", "-");
+                    FormatNumber(security.BuyPrice), FormatQuantity(security.Quantity), "-", "-", "-", "-");
                 continue;
             }
 
@@ -300,12 +300,12 @@ public sealed class MainForm : Form
                 string.IsNullOrWhiteSpace(security.Name) ? _cache.GetName(security.Symbol) : security.Name,
                 TypeName(security.Type),
                 security.BuyDate.ToString("dd.MM.yyyy", German),
-                security.BuyPrice,
-                security.Quantity,
-                last.Close,
-                value,
-                ReturnCalculator.Percent(security.BuyPrice, last.Close),
-                returnPeriod.HasValue ? (object)returnPeriod.Value : "-");
+                FormatNumber(security.BuyPrice),
+                FormatQuantity(security.Quantity),
+                FormatNumber(last.Close),
+                FormatNumber(value),
+                FormatPercent(ReturnCalculator.Percent(security.BuyPrice, last.Close)),
+                FormatPercent(returnPeriod));
 
             if (_showSingle.Checked)
             {
@@ -518,6 +518,16 @@ public sealed class MainForm : Form
     private static string FormatMoney(decimal value)
     {
         return value.ToString("#,##0.00", German) + " EUR";
+    }
+
+    private static string FormatNumber(decimal value)
+    {
+        return value.ToString("#,##0.00", German);
+    }
+
+    private static string FormatQuantity(decimal value)
+    {
+        return value.ToString("#,##0.##", German);
     }
 
     private static string FormatPercent(decimal? value)
