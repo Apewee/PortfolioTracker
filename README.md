@@ -4,6 +4,8 @@ Kleines C#-Programm (Windows Forms, .NET 10) zur Verwaltung eines Wertpapierport
 Es holt Kursdaten von Yahoo Finance, speichert sie lokal, berechnet Renditen und zeigt den
 Wertverlauf des Portfolios als Diagramm an.
 
+Kurzanleitung für die Bedienung: [START.md](START.md)
+
 ## Start
 
 `PortfolioTracker.exe` aus dem Release starten (liegt im Release unter Assets zum Download).
