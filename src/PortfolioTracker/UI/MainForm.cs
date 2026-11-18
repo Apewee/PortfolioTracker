@@ -246,6 +246,11 @@ public sealed class MainForm : Form
             SavePortfolio();
         }
 
+        if (IsDisposed)
+        {
+            return;
+        }
+
         if (failed.Count == 0)
         {
             SetStatus("Kurse aktualisiert am " + _cache.LastUpdate.ToString("dd.MM.yyyy HH:mm", German) + ".");
@@ -265,6 +270,11 @@ public sealed class MainForm : Form
 
     private void RefreshView()
     {
+        if (IsDisposed)
+        {
+            return;
+        }
+
         var rangeLabel = _rangeInput.SelectedItem?.ToString() ?? "1 Jahr";
         var start = PeriodStart(rangeLabel);
 
@@ -445,7 +455,10 @@ public sealed class MainForm : Form
 
     private void SetStatus(string text)
     {
-        _status.Text = text;
+        if (!IsDisposed)
+        {
+            _status.Text = text;
+        }
     }
 
     private static bool TryParseDecimal(string text, out decimal value)
