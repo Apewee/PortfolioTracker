@@ -53,6 +53,7 @@ src/PortfolioTracker/
     YahooFinanceClient.cs     Abruf und Auswertung der Kursdaten
     PriceCache.cs             Speichern/Laden der Kursverläufe als JSON
     ReturnCalculator.cs       Rendite- und Verlaufsberechnung
+    InputValidator.ts         Pruefung der Nutzereingaben
   UI/
     MainForm.cs               Eingaben, Tabelle, Zusammenfassung
     ChartControl.cs           Diagramm (schwarz auf weiß)

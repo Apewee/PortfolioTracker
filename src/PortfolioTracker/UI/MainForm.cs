@@ -39,7 +39,7 @@ public sealed class MainForm : Form
 
         _symbolInput = CreateInput("Symbol, z.B. AAPL");
         _nameInput = CreateInput("Name (optional)");
-        _typeInput = CreateComboBox(new[] { "Aktie", "ETF", "Obligation", "Fonds" });
+        _typeInput = CreateComboBox(InputValidator.TypeLabels);
         _buyDateInput = CreateInput("JJJJ-MM-TT");
         _buyPriceInput = CreateInput("Kaufpreis");
         _quantityInput = CreateInput("Stückzahl");
@@ -152,7 +152,15 @@ public sealed class MainForm : Form
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-        _cache.Load();
+        try
+        {
+            _cache.Load();
+        }
+        catch (Exception exception)
+        {
+            SetStatus("Fehler: Kursdatei konnte nicht gelesen werden: " + exception.Message);
+        }
+
         try
         {
             _portfolio = _store.Load();
@@ -257,8 +265,11 @@ public sealed class MainForm : Form
         }
         else if (loaded == 0)
         {
-            SetStatus("Keine Kurse geladen. Es werden die gespeicherten Daten vom "
-                + _cache.LastUpdate.ToString("dd.MM.yyyy HH:mm", German) + " verwendet. Grund: " + failed[0]);
+            var cached = _cache.LastUpdate == default
+                ? "Keine Kurse geladen und noch keine Kurse gespeichert."
+                : "Keine Kurse geladen. Es werden die gespeicherten Daten vom "
+                    + _cache.LastUpdate.ToString("dd.MM.yyyy HH:mm", German) + " verwendet.";
+            SetStatus(cached + " Grund: " + failed[0]);
         }
         else
         {
@@ -289,7 +300,7 @@ public sealed class MainForm : Form
             if (points.Count == 0)
             {
                 _grid.Rows.Add(
-                    security.Symbol, security.Name, TypeName(security.Type),
+                    security.Symbol, security.Name, InputValidator.TypeName(security.Type),
                     security.BuyDate.ToString("dd.MM.yyyy", German),
                     FormatNumber(security.BuyPrice), FormatQuantity(security.Quantity), "-", "-", "-", "-");
                 continue;
@@ -308,7 +319,7 @@ public sealed class MainForm : Form
             _grid.Rows.Add(
                 security.Symbol,
                 string.IsNullOrWhiteSpace(security.Name) ? _cache.GetName(security.Symbol) : security.Name,
-                TypeName(security.Type),
+                InputValidator.TypeName(security.Type),
                 security.BuyDate.ToString("dd.MM.yyyy", German),
                 FormatNumber(security.BuyPrice),
                 FormatQuantity(security.Quantity),
@@ -346,89 +357,15 @@ public sealed class MainForm : Form
 
     private Security? ValidateInput(out string? error)
     {
-        error = null;
-        var symbol = _symbolInput.Text.Trim();
-        if (symbol.Length == 0)
-        {
-            error = "Bitte ein Symbol eingeben.";
-            return null;
-        }
-
-        if (symbol.Any(char.IsWhiteSpace))
-        {
-            error = "Das Symbol darf keine Leerzeichen enthalten.";
-            return null;
-        }
-
-        if (!symbol.All(c => char.IsLetterOrDigit(c) || c == '.' || c == '-' || c == '^'))
-        {
-            error = "Das Symbol enthält ungültige Zeichen (erlaubt sind Buchstaben, Ziffern, Punkt, Bindestrich).";
-            return null;
-        }
-
-        if (_portfolio.Securities.Any(s => s.Symbol.Equals(symbol, StringComparison.OrdinalIgnoreCase)))
-        {
-            error = "Das Symbol ist bereits im Portfolio enthalten.";
-            return null;
-        }
-
-        var typeLabel = _typeInput.SelectedItem?.ToString() ?? "";
-        if (typeLabel.Length == 0)
-        {
-            error = "Bitte eine Art auswählen.";
-            return null;
-        }
-
-        if (!DateTime.TryParseExact(
-                _buyDateInput.Text.Trim(),
-                new[] { "yyyy-MM-dd", "dd.MM.yyyy" },
-                CultureInfo.InvariantCulture,
-                DateTimeStyles.None,
-                out var buyDate))
-        {
-            error = "Das Kaufdatum ist ungültig. Erwartet wird JJJJ-MM-TT oder TT.MM.JJJJ.";
-            return null;
-        }
-
-        if (buyDate > DateTime.Now.Date)
-        {
-            error = "Das Kaufdatum darf nicht in der Zukunft liegen.";
-            return null;
-        }
-
-        if (!TryParseDecimal(_buyPriceInput.Text, out var buyPrice))
-        {
-            error = "Der Kaufpreis ist keine gültige Zahl.";
-            return null;
-        }
-
-        if (buyPrice <= 0)
-        {
-            error = "Der Kaufpreis muss größer als 0 sein.";
-            return null;
-        }
-
-        if (!TryParseDecimal(_quantityInput.Text, out var quantity))
-        {
-            error = "Die Stückzahl ist keine gültige Zahl.";
-            return null;
-        }
-
-        if (quantity <= 0)
-        {
-            error = "Die Stückzahl muss größer als 0 sein.";
-            return null;
-        }
-
-        return new Security
-        {
-            Symbol = symbol.ToUpperInvariant(),
-            Name = _nameInput.Text.Trim(),
-            Type = ToSecurityType(typeLabel),
-            BuyDate = buyDate,
-            BuyPrice = buyPrice,
-            Quantity = quantity
-        };
+        return InputValidator.Validate(
+            _symbolInput.Text,
+            _nameInput.Text,
+            _typeInput.SelectedItem?.ToString() ?? "",
+            _buyDateInput.Text,
+            _buyPriceInput.Text,
+            _quantityInput.Text,
+            _portfolio.Securities,
+            out error);
     }
 
     private void SavePortfolio()
@@ -461,21 +398,6 @@ public sealed class MainForm : Form
         }
     }
 
-    private static bool TryParseDecimal(string text, out decimal value)
-    {
-        text = text.Trim().Replace(" ", "");
-        if (text.Contains(',') && text.Contains('.'))
-        {
-            text = text.Replace(".", "").Replace(",", ".");
-        }
-        else if (text.Contains(','))
-        {
-            text = text.Replace(",", ".");
-        }
-
-        return decimal.TryParse(text, NumberStyles.Number, CultureInfo.InvariantCulture, out value);
-    }
-
     private static DateTime PeriodStart(string rangeLabel)
     {
         var now = DateTime.Now.Date;
@@ -502,29 +424,6 @@ public sealed class MainForm : Form
             "2 Jahre" => "2y",
             "5 Jahre" => "5y",
             _ => "max"
-        };
-    }
-
-    private static string TypeName(SecurityType type)
-    {
-        return type switch
-        {
-            SecurityType.Stock => "Aktie",
-            SecurityType.Etf => "ETF",
-            SecurityType.Bond => "Obligation",
-            SecurityType.Fund => "Fonds",
-            _ => type.ToString()
-        };
-    }
-
-    private static SecurityType ToSecurityType(string label)
-    {
-        return label switch
-        {
-            "Aktie" => SecurityType.Stock,
-            "ETF" => SecurityType.Etf,
-            "Obligation" => SecurityType.Bond,
-            _ => SecurityType.Fund
         };
     }
 

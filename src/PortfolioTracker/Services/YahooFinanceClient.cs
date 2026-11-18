@@ -29,11 +29,23 @@ public sealed class YahooFinanceClient
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new InvalidOperationException("Yahoo Finance antwortet mit HTTP " + (int)response.StatusCode + ".");
+            var hint = (int)response.StatusCode == 429 ? " (zu viele Anfragen, bitte spaeter noch einmal)" : "";
+            throw new InvalidOperationException("Yahoo Finance antwortet mit HTTP " + (int)response.StatusCode + hint + ".");
         }
 
         var json = await response.Content.ReadAsStringAsync();
-        return Parse(symbol, json);
+        try
+        {
+            return Parse(symbol, json);
+        }
+        catch (InvalidOperationException)
+        {
+            throw;
+        }
+        catch (Exception exception)
+        {
+            throw new InvalidOperationException("Die Antwort von Yahoo Finance ist nicht lesbar.", exception);
+        }
     }
 
     private static PriceHistory Parse(string symbol, string json)
