@@ -20,4 +20,4 @@ Fehlermeldungen sind bewusst einfach gehalten. Meldet das Programm Bitte ein Sym
 
 Zum Schluss noch ein Hinweis zur Berechnung. Die Rendite wird aus den Schlusskursen gerechnet, Dividenden und Zinsen sind nicht enthalten. Bei ETFs und Aktien ist die echte Gesamtrendite daher etwas höher, als das Programm anzeigt.
 
-Die Datei PortfolioTracker.cs im Hauptordner des Repositories enthält denselben Quelltext in einer einzigen Datei, falls du den Code lieber auf einen Schlag sehen oder abgeben willst.
+Der ganze Code des Programms liegt in einer einzigen Datei, src/PortfolioTracker/PortfolioTracker.cs. Wer das Programm bauen will, verpackt diese Datei am einfachsten zusammen mit src/PortfolioTracker/PortfolioTracker.csproj.

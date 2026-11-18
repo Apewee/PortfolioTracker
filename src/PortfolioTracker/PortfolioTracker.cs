@@ -1,8 +1,6 @@
 // PortfolioTracker, das komplette Programm in einer Datei.
-// Derselbe Code wie unter src/PortfolioTracker.
-// Zum Bauen diese Datei in ein Windows-Forms-Projekt mit net10.0-windows legen
-// oder src/PortfolioTracker/PortfolioTracker.csproj verwenden.
-
+// Zum Bauen diese Datei in ein Windows-Forms-Projekt mit net10.0-windows legen,
+// oder einfach src/PortfolioTracker/PortfolioTracker.csproj bauen.
 using System;
 using System.Collections.Generic;
 using System.Drawing;
