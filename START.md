@@ -1,87 +1,23 @@
 # So benutzt du den Portfolio Tracker
 
-## 1. Programm starten
+Die Datei PortfolioTracker.exe liegt im Release. Sie herunterladen und doppelklicken, es muss nichts installiert werden.
 
-`PortfolioTracker.exe` aus dem Release herunterladen und doppelklicken.
-Es muss nichts installiert werden, auch nicht .NET.
+Beim Start ist das Fenster zunächst leer. Oben trägst du einen Titel ein. Zentral ist dabei das Symbol. Damit ist der Schlüssel gemeint, unter dem der Titel bei Yahoo Finance gelistet ist, also das Kürzel an der Börse und nicht die Wertpapiernummer. Bekannte Beispiele sind AAPL für Apple, MSFT für Microsoft, SAP.DE für SAP, SXR8.DE für den iShares Core S&P 500 ETF und ^GDAXI für den DAX. Gesucht wird auf finance.yahoo.com, dort findest du das passende Kürzel für jeden Titel. Das Symbol wird beim Abspeichern gross geschrieben.
 
-## 2. Wertpapiere eingeben
+Neben dem Symbol kannst du einen Namen eingeben, er wird aber automatisch ergänzt, wenn du das Feld leer lässt. Dazu gehören der Typ, also Aktie, ETF, Obligation oder Fonds, das Kaufdatum im Format JJJJ-MM-TT, der Kaufpreis und die Stückzahl. Bei Preis und Stückzahl sind Komma und Punkt als Dezimalzeichen erlaubt. Mit Hinzufügen landet der Titel in der Tabelle. So baust du dein Portfolio auf, mindestens drei Titel sollten es sein, sonst ergibt die Gesamtdarstellung wenig Sinn.
 
-Oben jedes Mal diese Angaben eintragen und auf **Hinzufügen** klicken:
+Mit Kurse laden holt das Programm die Kursverläufe von Yahoo Finance und schreibt sie in eine Datei. Der Zeitraum oben rechts, wählbar von einem Monat bis Max, bestimmt, welcher Abschnitt im Diagramm und in der Spalte Rendite Zeitraum betrachtet wird. Nach jeder Änderung des Zeitraums werden die Kurse neu geladen.
 
-| Feld | Beispiel |
-|---|---|
-| Symbol | `AAPL` |
-| Name | `Apple` (darf leer bleiben) |
-| Typ | `Aktie` |
-| Kaufdatum | `2024-01-15` |
-| Kaufpreis | `150,50` |
-| Stückzahl | `10` |
+Die Tabelle zeigt pro Titel den letzten Kurs, den aktuellen Wert als Stückzahl mal Kurs, die Rendite seit Kauf im Vergleich zum Kaufpreis und die Rendite im gewählten Zeitraum. Darüber steht eine Zeile mit Gesamtwert, Kaufwert und beiden Renditen für das ganze Portfolio. Das Diagramm darunter zeichnet den Wertverlauf des Portfolios als schwarze Linie, mit der Option Einzelne Titel anzeigen kommen die Linien der einzelnen Titel in Grau dazu.
 
-Mindestens drei Titel hinzufügen. Erst dann macht die Darstellung Sinn.
+Eine Zeile entfernst du, indem du sie anklickst und Entfernen drückst.
 
-Mögliche Symbole:
+Wenn das Internet kurz weg ist, stürzt das Programm nicht ab. Es nimmt dann die zuletzt gespeicherten Kurse und sagt unten in der Statusleiste, von wann diese sind. Liegen noch keine Kurse vor, steht das ebenfalls dort.
 
-| Art | Symbol |
-|---|---|
-| Aktie USA | `AAPL`, `MSFT`, `AMZN` |
-| Aktie Deutschland | `SAP.DE`, `SIE.DE` |
-| ETF | `SXR8.DE`, `SPY` |
-| Index | `^GDAXI`, `^GSPC` |
+Die Dateien liegen unter %LOCALAPPDATA%\PortfolioTracker, einmal portfolio.json mit deinen Eingaben und einmal prices.json mit den Kursverläufen. Der genaue Pfad steht beim Start unten in der Statusleiste.
 
-Eine Liste mit vielen Symbolen gibt es bei Yahoo Finance.
+Fehlermeldungen sind bewusst einfach gehalten. Meldet das Programm Bitte ein Symbol eingeben, ist das Symbol-Feld leer. Meldet es Das Kaufdatum ist ungültig, wurde das Datum nicht im Format JJJJ-MM-TT geschrieben. Meldet es Der Kaufpreis ist keine gültige Zahl, stecken Buchstaben oder Sonderzeichen im Preis. Meldet es Yahoo Finance kennt das Symbol nicht, ist das Kürzel falsch geschrieben oder der Titel nicht bei Yahoo gelistet. Meldet es HTTP 429, hat Yahoo kurz zu viele Anfragen blockiert, dann später noch einmal probieren.
 
-## 3. Kurse laden
+Zum Schluss noch ein Hinweis zur Berechnung. Die Rendite wird aus den Schlusskursen gerechnet, Dividenden und Zinsen sind nicht enthalten. Bei ETFs und Aktien ist die echte Gesamtrendite daher etwas höher, als das Programm anzeigt.
 
-Auf **Kurse laden** klicken. Das Programm holt die Kurse von Yahoo Finance
-und schreibt sie in eine Datei. Der Namen des Titels wird dabei ergänzt,
-wenn das Feld Name leer war.
-
-## 4. Zeitraum wählen
-
-Oben rechts den Zeitraum aus der Liste wählen: 1 Monat bis Max.
-Das Diagramm und die Spalte „Rendite Zeitraum" folgen dieser Auswahl.
-
-## 5. Titel entfernen
-
-Zeile in der Tabelle anklicken und **Entfernen** drücken.
-
-## Was zeigt die Tabelle
-
-| Spalte | Bedeutung |
-|---|---|
-| Kurs | letzter Schlusskurs |
-| Wert | Stückzahl mal Kurs |
-| Rendite seit Kauf | Vergleich mit dem Kaufpreis |
-| Rendite Zeitraum | Kurs zu Beginn und Ende des gewählten Zeitraums |
-
-Darüber steht die Zeile mit Gesamtwert, Kaufwert und beiden Gesamtrenditen.
-
-## Wenn das Internet weg ist
-
-Das Programm bricht nicht ab. Es nutzt dann die zuletzt gespeicherten Kurse
-und sagt unten in der Statusleiste, von wann diese sind.
-
-## Liegen die Dateien
-
-| Datei | Inhalt |
-|---|---|
-| `%LOCALAPPDATA%\PortfolioTracker\portfolio.json` | deine Eingaben |
-| `%LOCALAPPDATA%\PortfolioTracker\prices.json` | die Kursverläufe |
-
-Der genaue Ordner steht beim Start unten in der Statusleiste.
-
-## Häufige Meldungen
-
-| Meldung | Ursache |
-|---|---|
-| Bitte ein Symbol eingeben. | Das Symbol-Feld ist leer. |
-| Das Kaufdatum ist ungültig. | Falsches Format, richtig ist `JJJJ-MM-TT`. |
-| Der Kaufpreis ist keine gültige Zahl. | Buchstaben oder Sonderzeichen im Preis. |
-| Yahoo Finance kennt das Symbol nicht. | Symbol falsch geschrieben oder nicht bei Yahoo gelistet. |
-| HTTP 429 | Yahoo blockiert kurz, später noch einmal probieren. |
-
-## Rendite ohne Dividenden
-
-Die Berechnung nutzt die Schlusskurse. Dividenden und Zinsen sind also nicht
-drin. Für ETFs und Aktien ist die echte Gesamtrendite damit etwas höher.
+Die Datei PortfolioTracker.cs im Hauptordner des Repositories enthält denselben Quelltext in einer einzigen Datei, falls du den Code lieber auf einen Schlag sehen oder abgeben willst.
