@@ -764,16 +764,16 @@ public sealed class MainForm : Form
             BackColor = Color.White,
             Padding = new Padding(6),
         };
-        inputPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 13));
-        inputPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 24));
         inputPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12));
-        inputPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16));
-        inputPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15));
-        inputPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12));
-        inputPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8));
-        inputPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 20));
-        inputPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 28));
-        inputPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 34));
+        inputPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20));
+        inputPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10));
+        inputPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14));
+        inputPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14));
+        inputPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10));
+        inputPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20));
+        inputPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 30));
+        inputPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 44));
+        inputPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 44));
 
         AddLabel(inputPanel, "Symbol", 0, 0);
         AddLabel(inputPanel, "Name", 1, 0);
@@ -792,9 +792,10 @@ public sealed class MainForm : Form
         inputPanel.Controls.Add(_addButton, 0, 2);
         inputPanel.Controls.Add(_removeButton, 1, 2);
         inputPanel.Controls.Add(_showSingle, 2, 2);
-        AddLabel(inputPanel, "Zeitraum", 3, 2);
-        inputPanel.Controls.Add(_rangeInput, 4, 2);
-        inputPanel.Controls.Add(_loadButton, 5, 2);
+        inputPanel.SetColumnSpan(_showSingle, 2);
+        AddLabel(inputPanel, "Zeitraum", 4, 2);
+        inputPanel.Controls.Add(_rangeInput, 5, 2);
+        inputPanel.Controls.Add(_loadButton, 6, 2);
 
         var chartPanel = new TableLayoutPanel
         {
@@ -815,7 +816,7 @@ public sealed class MainForm : Form
             RowCount = 4,
             BackColor = Color.White,
         };
-        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 96));
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 140));
         root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         root.RowStyles.Add(new RowStyle(SizeType.Absolute, 250));
         root.RowStyles.Add(new RowStyle(SizeType.Absolute, 26));
@@ -1177,8 +1178,8 @@ public sealed class MainForm : Form
         {
             Text = text,
             Dock = DockStyle.Fill,
-            TextAlign = ContentAlignment.BottomLeft,
-            Margin = new Padding(4),
+            TextAlign = ContentAlignment.MiddleLeft,
+            Margin = new Padding(4, 0, 4, 0),
             ForeColor = Color.Black,
         }, column, row);
     }
